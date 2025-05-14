@@ -9172,20 +9172,12 @@ PrefabInstance:
       value: raceOverPanel
       objectReference: {fileID: 0}
     - target: {fileID: 3311812493461207605, guid: 13169538a60174666aad6070f7dfda7b, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 141.5077
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311812493461207605, guid: 13169538a60174666aad6070f7dfda7b, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 2101.223
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311812493461207605, guid: 13169538a60174666aad6070f7dfda7b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -41.8034
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 3311812493461207605, guid: 13169538a60174666aad6070f7dfda7b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 17.3313
+      value: 1.5643e-10
       objectReference: {fileID: 0}
     - target: {fileID: 3734387813141768092, guid: 13169538a60174666aad6070f7dfda7b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

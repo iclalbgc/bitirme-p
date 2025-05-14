@@ -20,7 +20,8 @@ public class SceneController : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene("MainMenu"); // Bu sahne build settings'te olmalı
+        Time.timeScale = 1f; // Menüye dönmeden önce oyun duruyorsa zaman akışını düzelt
+        SceneManager.LoadScene("Main Menu");
     }
 
     public void ExitGame()

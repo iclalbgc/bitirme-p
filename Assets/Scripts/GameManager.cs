@@ -1,32 +1,69 @@
-// GameManager.cs
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GameStates { countDown, running, raceOver };
+public enum GameStates { countDown, running, raceOver }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
-    GameStates gameState = GameStates.countDown;
 
-    [SerializeField] float countdownDuration = 3f;
-    [SerializeField] GameObject raceOverPanel;
+    private GameStates gameState = GameStates.countDown;
+
+    [SerializeField] private float countdownDuration = 3f;
+    [SerializeField] private GameObject raceOverPanel;
+    [SerializeField] private GameObject settingsPanel;
 
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else if (instance != this)
         {
             Destroy(gameObject);
-            return;
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
-    void LevelStart()
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (settingsPanel != null)
+            {
+                bool isActive = settingsPanel.activeSelf;
+                settingsPanel.SetActive(!isActive);
+
+                // Oyunu duraklat / devam ettir
+                Time.timeScale = isActive ? 1f : 0f;
+
+                // Tüm sesleri duraklat / devam ettir
+                ToggleAllAudio(!isActive);
+            }
+        }
+
+        Debug.Log("ESC kontrolü yapılıyor");
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        LevelStart();
+        settingsPanel = GameObject.Find("SettingsPanel");
+    }
+
+    private void LevelStart()
     {
         Time.timeScale = 1f;
         gameState = GameStates.countDown;
@@ -34,20 +71,15 @@ public class GameManager : MonoBehaviour
         StartCoroutine(BeginRaceAfterCountdown());
     }
 
-    IEnumerator BeginRaceAfterCountdown()
+    private IEnumerator BeginRaceAfterCountdown()
     {
         yield return new WaitForSeconds(countdownDuration);
         OnRaceStart();
     }
 
-    public GameStates GetGameState()
-    {
-        return gameState;
-    }
-
     public void OnRaceStart()
     {
-        Debug.Log("OnRaceStart");
+        Debug.Log("Race Started");
         gameState = GameStates.running;
         Time.timeScale = 1f;
 
@@ -66,7 +98,6 @@ public class GameManager : MonoBehaviour
         {
             car.AddScore(-car.GetScore());
 
-            // SFX durdurma için ses bileşeni varsa kapat
             var sfx = car.GetComponent<CarSfxHandler>();
             if (sfx != null)
             {
@@ -79,13 +110,20 @@ public class GameManager : MonoBehaviour
             raceOverPanel.SetActive(true);
     }
 
-    private void OnEnable()
+    public GameStates GetGameState()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        return gameState;
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void ToggleAllAudio(bool shouldPlay)
     {
-        LevelStart();
+        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+        foreach (AudioSource audio in allAudioSources)
+        {
+            if (shouldPlay)
+                audio.UnPause();
+            else
+                audio.Pause();
+        }
     }
 }
